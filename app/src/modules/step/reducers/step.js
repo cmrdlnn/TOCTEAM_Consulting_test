@@ -1,12 +1,12 @@
-import { NEXT_STEP, PREV_STEP } from '../constants';
+import { NEXT, PREV } from '../constants';
 
 export default (state = 0, { type }) => {
   switch (type) {
-    case NEXT_STEP:
-      return state + 1;
+    case NEXT:
+      return 1;
 
-    case PREV_STEP: {
-      return state - 1;
+    case PREV: {
+      return 0;
     }
 
     default:

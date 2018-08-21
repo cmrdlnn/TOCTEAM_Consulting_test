@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { nextStep, prevStep } from 'modules/step';
+import { Container } from 'reactstrap';
+
+import { next, prev } from 'modules/step';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -16,7 +18,9 @@ const STEPS = [
 ];
 
 const App = ({ step, stepNext, stepPrev }) => (
-  React.createElement(STEPS[step], { stepNext, stepPrev })
+  <Container className="mt-3">
+    { React.createElement(STEPS[step], { stepNext, stepPrev }) }
+  </Container>
 );
 
 App.propTypes = {
@@ -28,8 +32,8 @@ App.propTypes = {
 const mapStateToProps = ({ step }) => ({ step });
 
 const mapDispatchToProps = dispatch => ({
-  stepNext: bindActionCreators(nextStep, dispatch),
-  stepPrev: bindActionCreators(prevStep, dispatch),
+  stepNext: bindActionCreators(next, dispatch),
+  stepPrev: bindActionCreators(prev, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

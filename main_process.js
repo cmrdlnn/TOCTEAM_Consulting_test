@@ -10,14 +10,15 @@ electronReload(__dirname);
 let mainWindow;
 
 function createWindow() {
-  mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-  });
   const startUrl = process.env.ELECTRON_START_URL || url.format({
     pathname: path.join(__dirname, 'app/index.html'),
     protocol: 'file:',
     slashes: true,
+  });
+
+  mainWindow = new BrowserWindow({
+    height: 600,
+    width: 800,
   });
   mainWindow.loadURL(startUrl);
   mainWindow.webContents.openDevTools();

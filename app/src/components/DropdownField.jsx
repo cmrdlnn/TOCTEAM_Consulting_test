@@ -55,7 +55,7 @@ class DropdownField extends React.Component {
   }
 
   render() {
-    const { items, onSelect, ...other } = this.props;
+    const { dropdownToggleProps, items, onSelect, ...other } = this.props;
     const { dropdownIsOpen, selectedItem } = this.state;
     const itemsKeys = Object.keys(items);
 
@@ -66,7 +66,7 @@ class DropdownField extends React.Component {
         {...other}
       >
         <div className={dropdownIsOpen ? 'dropup' : ''}>
-          <DropdownToggle caret>
+          <DropdownToggle caret {...dropdownToggleProps}>
             {
               typeof items[selectedItem] === 'object'
                 ? items[selectedItem].title
@@ -116,11 +116,13 @@ class DropdownField extends React.Component {
 }
 
 DropdownField.defaultProps = {
+  dropdownToggleProps: null,
   items: [],
   onSelect: null,
 };
 
 DropdownField.propTypes = {
+  dropdownToggleProps: PropTypes.objectOf(PropTypes.any),
   items: PropTypes.oneOfType([
     PropTypes.arrayOf(
       PropTypes.oneOfType([

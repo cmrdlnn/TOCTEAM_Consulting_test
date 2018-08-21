@@ -1,4 +1,5 @@
-import { ADD_ERROR, AUTHENTICATE } from '../constants';
+import { ADD_ERROR, AUTHENTICATE, LOADING } from '../constants';
+import { PREV } from '../../step/constants';
 
 export default (state = {}, { type, payload }) => {
   switch (type) {
@@ -6,7 +7,16 @@ export default (state = {}, { type, payload }) => {
       return { error: payload };
 
     case AUTHENTICATE: {
-      return { client: payload };
+      return payload;
+    }
+
+    case LOADING: {
+      return { loading: true };
+    }
+
+    case PREV: {
+      state.client.close();
+      return {};
     }
 
     default:

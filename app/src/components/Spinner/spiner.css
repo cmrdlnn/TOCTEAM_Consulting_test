@@ -1,0 +1,16 @@
+.spinner-title {
+  font-size: 150%;
+  font-weight: bold;
+  margin-top: 5%;
+  padding-left: 0 !important;
+  text-transform: uppercase;
+  -webkit-animation: pulse 3500ms ease-in-out infinite;
+          animation: pulse 3500ms ease-in-out infinite;
+}
+
+.spinner-wrapper {
+  position: absolute;
+  margin: auto;
+  left: 50%;
+  top: 50%;
+}

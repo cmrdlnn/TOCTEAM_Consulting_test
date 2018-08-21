@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { Card, Container, Label, Row } from 'reactstrap';
+import { Alert, Card, Col, Label, Row } from 'reactstrap';
 
 import DropdownField from 'components/DropdownField';
 import Field from 'components/Field';
@@ -12,6 +12,7 @@ import Form from 'components/Form';
 import { authenticate } from 'modules/authentication';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles.css';
 
 const TYPES = [
   'FTP',
@@ -26,19 +27,22 @@ class Authentication extends Component {
   state = {}
 
   handleSubmit = (credentials) => {
-    const { auth } = this.props;
-    const { type } = this.state;
+    const { auth, stepNext } = this.props;
+    let { type } = this.state;
+    let { host } = credentials;
 
-    const portMatch = credentials.host.match(/^(.+):(\d+)$/);
-    let args = { ...credentials, type };
+    type = type.toLowerCase();
+    [,, host] = host.match(new RegExp(`(${type}:\/\/)?(.+?)\/?$`));
+    const portMatch = host.match(/^(.+):(\d+)$/i);
+    let args = { ...credentials, host, type };
 
     if (portMatch) {
-      const [, host, port] = portMatch;
+      const [, matchedHost, port] = portMatch;
 
-      args = { ...args, host, port };
+      args = { ...args, host: matchedHost, port };
     }
 
-    auth(args);
+    auth(args).then(stepNext);
   }
 
   handleTypeSelect = (type) => {
@@ -48,40 +52,55 @@ class Authentication extends Component {
   hostValidate = () => {}
 
   render() {
+    const { error, loading, stepPrev } = this.props;
     const { hostError } = this.state;
 
+    const buttonProps = { color: 'primary', disabled: loading };
+
     return (
-      <Container className="mt-3">
-        <Row>
-          <Card className="mx-auto p-3">
+      <Row>
+        <Col sm="12" md={{ size: 5, offset: 3 }}>
+          <Card className="p-3">
             <Label>
               Select protocol:
             </Label>
             <DropdownField
               className="mb-3"
+              dropdownToggleProps={buttonProps}
               items={TYPES}
               onSelect={this.handleTypeSelect}
             />
-            <Form buttonText="Connect" onSubmit={this.handleSubmit}>
+            <Form
+              buttonProps={buttonProps}
+              buttonText="Connect"
+              disabled={loading}
+              onSubmit={this.handleSubmit}
+            >
               <Field
+                disabled={loading}
                 name="host"
                 onBlur={this.handleHostBlur}
                 title="Address of server:"
                 {...hostError}
               />
               <Field
+                disabled={loading}
                 name="username"
                 title="Username:"
               />
               <Field
+                disabled={loading}
                 name="password"
                 title="Password:"
                 type="password"
               />
+              <Alert color="danger" isOpen={!!error} toggle={stepPrev}>
+                { error && error.message }
+              </Alert>
             </Form>
           </Card>
-        </Row>
-      </Container>
+        </Col>
+      </Row>
     );
   }
 }
