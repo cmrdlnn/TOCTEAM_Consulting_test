@@ -95,7 +95,7 @@ class Authentication extends Component {
                 type="password"
               />
               <Alert color="danger" isOpen={!!error} toggle={stepPrev}>
-                { error && error.message }
+                { error }
               </Alert>
             </Form>
           </Card>
