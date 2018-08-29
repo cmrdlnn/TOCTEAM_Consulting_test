@@ -63,7 +63,7 @@
     "package-win": "electron-builder build --win --x64",
     "renderer-build": "webpack --config=webpack.config.renderer.js --mode production",
     "renderer-dev": "webpack-dev-server --config=webpack.config.renderer.js --mode development --hot --watch-poll",
-    "serve": "electron .",
+    "serve": "electron . --disable-gpu",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "version": "0.0.0"

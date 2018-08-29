@@ -15,7 +15,7 @@ export default (state = {}, { type, payload }) => {
     }
 
     case PREV: {
-      state.client.close();
+      if (state.client) state.client.close();
       return {};
     }
 
