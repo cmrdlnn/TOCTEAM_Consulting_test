@@ -19,6 +19,11 @@ const TYPES = [
   'SFTP',
 ];
 
+const hostIsEmpty = {
+  feedback: 'This field is required',
+  invalid: true,
+};
+
 class Authentication extends Component {
   static propTypes = {
     auth: PropTypes.func.isRequired,
@@ -26,10 +31,15 @@ class Authentication extends Component {
 
   state = {}
 
+  componentDidMount() {
+    this.host.focus();
+  }
+
   handleSubmit = (credentials) => {
+    let { host } = credentials;
+
     const { auth, stepNext } = this.props;
     let { type } = this.state;
-    let { host } = credentials;
 
     type = type.toLowerCase();
     [,, host] = host.match(new RegExp(`(${type}:\/\/)?(.+?)\/?$`));
@@ -49,13 +59,20 @@ class Authentication extends Component {
     this.setState({ type });
   }
 
-  hostValidate = () => {}
+  hostValidate = () => {
+    const isValid = this.host.value.trim() !== '';
+
+    this.setState({ hostError: isValid ? null : hostIsEmpty });
+    return isValid;
+  }
+
+  hostRef = (ref) => {
+    this.host = ref;
+  }
 
   render() {
     const { error, loading, stepPrev } = this.props;
     const { hostError } = this.state;
-
-    const buttonProps = { color: 'primary', disabled: loading };
 
     return (
       <Row>
@@ -66,20 +83,22 @@ class Authentication extends Component {
             </Label>
             <DropdownField
               className="mb-3"
-              dropdownToggleProps={buttonProps}
+              dropdownToggleProps={{ color: 'primary', disabled: loading }}
               items={TYPES}
               onSelect={this.handleTypeSelect}
             />
             <Form
-              buttonProps={buttonProps}
+              buttonProps={{ color: 'primary', disabled: Boolean(hostError || loading) }}
               buttonText="Connect"
               disabled={loading}
               onSubmit={this.handleSubmit}
             >
               <Field
                 disabled={loading}
+                innerRef={this.hostRef}
                 name="host"
-                onBlur={this.handleHostBlur}
+                onBlur={this.hostValidate}
+                onChange={this.hostValidate}
                 title="Address of server:"
                 {...hostError}
               />
