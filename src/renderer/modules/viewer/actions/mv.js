@@ -49,7 +49,6 @@ export default (from, to, around, isFile) => (dispatch, getState) => {
       }
 
       const [newList, removedNode] = removeNode(list, from.split('/'));
-
       const payload = addNode(newList, newPath.split('/'), removedNode, newPath);
 
       dispatch({

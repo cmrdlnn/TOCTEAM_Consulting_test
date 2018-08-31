@@ -7,7 +7,6 @@
   },
   "dependencies": {
     "bootstrap": "^4.1.3",
-    "downloadjs": "^1.4.7",
     "easy-ftp": "^0.3.44",
     "halogenium": "^2.2.3",
     "prop-types": "^15.6.2",
@@ -54,8 +53,8 @@
   "name": "TOCTEAM_Consulting_test",
   "repository": "github:cmrdlnn/TOCTEAM_Consulting_test",
   "scripts": {
-    "build": "npm-run-all --parallel main-build renderer-build",
-    "dev": "npm-run-all --parallel main-dev renderer-dev serve",
+    "build": "run-p main-build renderer-build",
+    "dev": "npm-run-all main-dev --parallel renderer-dev serve",
     "main-build": "webpack --config=webpack.config.main.js --mode production",
     "main-dev": "webpack --config=webpack.config.main.js --mode development",
     "package-all": "electron-builder build -mwl",

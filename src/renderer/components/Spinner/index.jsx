@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import { ScaleLoader } from 'halogenium';
 
-import './spiner.css';
+import './styles.css';
 
 const Spinner = ({ title }) => (
   <div className="spinner-wrapper">
