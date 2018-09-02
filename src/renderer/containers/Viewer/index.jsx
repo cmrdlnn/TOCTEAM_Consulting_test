@@ -10,15 +10,13 @@ import {
   Card,
   CardBody,
   CardHeader,
-  ListGroup,
-  ListGroupItem,
-  Popover,
 } from 'reactstrap';
 
-import { download, ls, mv } from 'modules/viewer';
+import { download, ls, mv, rm } from 'modules/viewer';
 
 import 'rc-tree/assets/index.css';
 
+import ContextMenu from 'components/ContextMenu';
 import Spinner from 'components/Spinner';
 import Toaster from '../Toaster';
 
@@ -38,9 +36,10 @@ const renderNodes = nodes => (
 
 class Viewer extends Component {
   static propTypes = {
-    executeDownload: PropTypes.func.isRequired,
+    executeDownload: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     executeLs: PropTypes.func.isRequired,
     executeMv: PropTypes.func.isRequired,
+    executeRm: PropTypes.func.isRequired, // eslint-disable-line react/no-unused-prop-types
     list: PropTypes.arrayOf(PropTypes.any),
     stepPrev: PropTypes.func.isRequired,
     url: PropTypes.string.isRequired,
@@ -80,23 +79,31 @@ class Viewer extends Component {
     });
   }
 
-  handleDownloadClick = () => {
-    const { executeDownload } = this.props;
+  handleDelete = () => {
+    this.contextMenuAction('Rm');
+  }
+
+  handleDownload = () => {
+    this.contextMenuAction('Download');
+  }
+
+  contextMenuAction = (actionName) => {
+    const { [`execute${actionName}`]: action } = this.props;
     const { eventKey } = this.state;
 
-    executeDownload(eventKey);
+    action(eventKey);
     this.toggle();
   }
 
   handleNodeRightClick = ({ node: { selectHandle, props: { eventKey } } }) => {
     this.toggle(() => {
-      this.setState({ eventKey, popoverProps: { isOpen: true, target: selectHandle } });
+      this.setState({ eventKey, contextMenuTarget: selectHandle });
     });
   }
 
   toggle = (callback) => {
     this.setState(
-      { eventKey: null, popoverProps: null },
+      { eventKey: null, contextMenuTarget: null },
       typeof callback === 'function' ? callback : null,
     );
   }
@@ -107,7 +114,7 @@ class Viewer extends Component {
     if (!list) return <Spinner />;
 
     const { url, stepPrev } = this.props;
-    const { popoverProps } = this.state;
+    const { contextMenuTarget } = this.state;
 
     return (
       <Fragment>
@@ -141,19 +148,12 @@ class Viewer extends Component {
               )
             }
           </CardBody>
-          { popoverProps && (
-            <Popover placement="right-start" toggle={this.toggle} {...popoverProps}>
-              <ListGroup>
-                <ListGroupItem
-                  action
-                  className="context-menu-item"
-                  onClick={this.handleDownloadClick}
-                >
-                  Download
-                </ListGroupItem>
-              </ListGroup>
-            </Popover>
-          )}
+          <ContextMenu
+            onDelete={this.handleDelete}
+            onDownload={this.handleDownload}
+            toggle={this.toggle}
+            target={contextMenuTarget}
+          />
         </Card>
         <Toaster />
       </Fragment>
@@ -170,6 +170,7 @@ const mapDispatchToProps = dispatch => ({
   executeDownload: bindActionCreators(download, dispatch),
   executeLs: bindActionCreators(ls, dispatch),
   executeMv: bindActionCreators(mv, dispatch),
+  executeRm: bindActionCreators(rm, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Viewer);

@@ -10,3 +10,18 @@ export const sliceArray = (array, index, ...updates) => ([
   ...updates,
   ...array.slice(index + 1),
 ]);
+
+export const removeNode = (list, path) => {
+  const [childrenPath, index] = findNode(list, path);
+
+  if (childrenPath.length === 1) {
+    return [sliceArray(list, index), list[index]];
+  }
+
+  const [updates, removedNode] = removeNode(list[index].children, childrenPath);
+
+  return [
+    sliceArray(list, index, { ...list[index], children: updates }),
+    removedNode,
+  ];
+};

@@ -1,7 +1,7 @@
 import { showNotification } from 'modules/notifications';
 
 import { MV } from '../constants';
-import { findNode, sliceArray } from '../utils';
+import { findNode, removeNode, sliceArray } from '../utils';
 
 const addNode = (list, path, node, newKey) => {
   const [childrenPath, index] = findNode(list, path);
@@ -14,21 +14,6 @@ const addNode = (list, path, node, newKey) => {
     ...other,
     children: addNode(children, childrenPath, node, newKey),
   });
-};
-
-const removeNode = (list, path) => {
-  const [childrenPath, index] = findNode(list, path);
-
-  if (childrenPath.length === 1) {
-    return [sliceArray(list, index), list[index]];
-  }
-
-  const [updates, removedNode] = removeNode(list[index].children, childrenPath);
-
-  return [
-    sliceArray(list, index, { ...list[index], children: updates }),
-    removedNode,
-  ];
 };
 
 const match = path => path.match(/^(.*\/)(.+)$/);

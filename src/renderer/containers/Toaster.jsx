@@ -7,8 +7,8 @@ import { Alert, AlertContainer } from 'react-bs-notifier';
 const Toaster = ({ notifications }) => (
   <AlertContainer>
     {
-      Object.values(notifications).map(({ message, type }) => (
-        <Alert type={type} showIcon>
+      Object.entries(notifications).map(([key, { message, type }]) => (
+        <Alert key={key} type={type} showIcon={false}>
           { message }
         </Alert>
       ))
