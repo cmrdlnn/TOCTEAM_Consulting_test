@@ -83,15 +83,19 @@ class Viewer extends Component {
     this.contextMenuAction('Rm');
   }
 
-  handleDownload = () => {
-    this.contextMenuAction('Download');
+  handleDownload = ({ target: { files } }) => {
+    this.contextMenuAction('Download', files[0].path);
   }
 
-  contextMenuAction = (actionName) => {
+  handleDownloadButtonClick = () => {
+    this.folderViewer.click();
+  }
+
+  contextMenuAction = (actionName, ...args) => {
     const { [`execute${actionName}`]: action } = this.props;
     const { eventKey } = this.state;
 
-    action(eventKey);
+    action(eventKey, ...args);
     this.toggle();
   }
 
@@ -103,7 +107,7 @@ class Viewer extends Component {
 
   toggle = (callback) => {
     this.setState(
-      { eventKey: null, contextMenuTarget: null },
+      { contextMenuTarget: null },
       typeof callback === 'function' ? callback : null,
     );
   }
@@ -150,12 +154,20 @@ class Viewer extends Component {
           </CardBody>
           <ContextMenu
             onDelete={this.handleDelete}
-            onDownload={this.handleDownload}
+            onDownload={this.handleDownloadButtonClick}
             toggle={this.toggle}
             target={contextMenuTarget}
           />
         </Card>
         <Toaster />
+        <input
+          directory=""
+          onChange={this.handleDownload}
+          ref={(ref) => { this.folderViewer = ref; }}
+          style={{ display: 'none' }}
+          type="file"
+          webkitdirectory=""
+        />
       </Fragment>
     );
   }
